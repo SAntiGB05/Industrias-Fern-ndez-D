@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import NextImage from 'next/image'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import {
-  Factory, Zap, Award, Shield, Paintbrush, UserCheck, Frame,
+  Factory, Zap, Award, Shield, Paintbrush, UserCheck,
 } from 'lucide-react'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { slideInLeft, slideInRight, staggerContainer, fadeUp } from '@/lib/animations'
+import { slideInLeft, staggerContainer, fadeUp } from '@/lib/animations'
 
 const reasons = [
   {
@@ -58,35 +57,6 @@ const comparison = [
   { feature: 'Atención',           ifd: '✅ Directa con Claudia',       market: '⚠️ Intermediarios' },
 ]
 
-// Imagen estática — muestra placeholder hasta que exista section_confia.jpg
-function TrustImage() {
-  const [error, setError] = useState(false)
-
-  if (error) {
-    return (
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/[0.02]">
-        <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center">
-          <Frame className="w-7 h-7 text-gold/35" />
-        </div>
-        <div className="text-center">
-          <p className="font-display text-[10px] text-steel/70 uppercase tracking-widest">Próximamente</p>
-          <p className="font-body text-[9px] text-white/25 mt-1">section_confia.jpg</p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <NextImage
-      src="/images/section_confia.jpg"
-      alt="Por qué confiar en Industrias Fernández D."
-      fill
-      className="object-cover"
-      sizes="(max-width: 1024px) 100vw, 50vw"
-      onError={() => setError(true)}
-    />
-  )
-}
 
 export function Clients() {
   const ref    = useRef(null)
@@ -114,7 +84,14 @@ export function Clients() {
           >
             {/* Marco con línea dorada superior */}
             <div className="relative h-[420px] lg:h-[520px] rounded-2xl overflow-hidden border border-gold/20">
-              <TrustImage />
+              <video
+                src="/section_confia.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              />
               {/* Overlay inferior para que el badge sea legible */}
               <div className="absolute inset-0 bg-gradient-to-t from-navy-darker/80 via-transparent to-transparent" />
               {/* Badge flotante */}

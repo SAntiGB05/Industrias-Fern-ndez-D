@@ -55,7 +55,7 @@ function StepImage({ stepNumber, icon: Icon }: { stepNumber: number; icon: React
 
   return (
     <Image
-      src={`/images/${fileName}.jpg`}
+      src={`/${fileName}.jpg`}
       alt={`Etapa ${stepNumber} del proceso de fabricación`}
       fill
       className="object-cover"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { MessageCircle, Star, Ruler, Clock, Zap } from 'lucide-react'
@@ -9,6 +9,20 @@ import { Badge } from '@/components/ui/Badge'
 import { buildWhatsAppUrl, WA_MESSAGES } from '@/lib/whatsapp'
 import { staggerContainer, fadeUp } from '@/lib/animations'
 import { products } from '@/data/products'
+
+const ctaBgImages = [
+  '/Medida_especial.JPG',
+  '/Medida_especial2.HEIC',
+  '/Medida_especial3.HEIC',
+  '/Hero3.jpg',
+]
+
+const cajaImages = [
+  '/Caja_sin_fondo.png',
+  '/Caja_sin_fondo2.png',
+  '/Caja_sin_fondo3.png',
+  '/Caja_sin_fondo4.png',
+]
 
 const filters = [
   { label: 'Todos', value: 0 },
@@ -24,6 +38,14 @@ export function Catalog() {
   const isInView = useInView(ref, { once: true, amount: 0.1 })
   const ctaRef = useRef(null)
   const ctaInView = useInView(ctaRef, { once: true, amount: 0.2 })
+
+  const [ctaBgIndex, setCtaBgIndex] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCtaBgIndex((prev) => (prev + 1) % ctaBgImages.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   const filtered =
     activeFilter === 0
@@ -68,7 +90,7 @@ export function Catalog() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
         >
           <AnimatePresence mode="popLayout">
-            {filtered.map((product) => (
+            {filtered.map((product, index) => (
               <motion.div
                 key={product.id}
                 variants={fadeUp}
@@ -80,16 +102,17 @@ export function Catalog() {
                 transition={{ duration: 0.25 }}
                 className="bg-navy-dark border border-white/10 rounded-2xl overflow-hidden group hover:border-gold/40 hover:shadow-xl hover:shadow-black/30 transition-all duration-300"
               >
-                {/* Product visual placeholder */}
-                <div className="relative bg-navy-darker h-40 flex items-center justify-center overflow-hidden">
+                {/* Product visual */}
+                <div className="relative bg-navy-darker h-44 flex items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 steel-texture opacity-50" />
-                  <div className="relative text-center">
-                    <div className="font-display font-black text-3xl text-white/20 group-hover:text-white/30 transition-colors">
-                      {product.medida}
-                    </div>
-                    <div className="mt-1">
-                      <Ruler className="w-5 h-5 text-gold/40 mx-auto" />
-                    </div>
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={cajaImages[index % cajaImages.length]}
+                      alt={product.ref}
+                      fill
+                      className="object-contain p-5 drop-shadow-[0_4px_16px_rgba(0,0,0,0.5)] group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
                   </div>
                   {product.popular && (
                     <div className="absolute top-3 right-3">
@@ -245,16 +268,26 @@ export function Catalog() {
                 </motion.div>
               </div>
 
-              {/* RIGHT — image with overlay elements */}
+              {/* RIGHT — image slideshow */}
               <div className="relative hidden lg:block min-h-[420px]">
-                {/* Photo */}
-                <Image
-                  src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=900&q=80"
-                  alt="Fabricación de nichos a medida especial"
-                  fill
-                  className="object-cover"
-                  sizes="50vw"
-                />
+                <AnimatePresence mode="sync">
+                  <motion.div
+                    key={ctaBgIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.2, ease: 'easeInOut' }}
+                    className="absolute inset-0"
+                  >
+                    <Image
+                      src={ctaBgImages[ctaBgIndex]}
+                      alt="Fabricación de nichos a medida especial"
+                      fill
+                      className="object-cover"
+                      sizes="50vw"
+                    />
+                  </motion.div>
+                </AnimatePresence>
                 {/* Left-side gradient so it blends with the content panel */}
                 <div className="absolute inset-0 bg-gradient-to-r from-navy-darker via-navy-darker/40 to-transparent" />
                 {/* Bottom dark fade */}

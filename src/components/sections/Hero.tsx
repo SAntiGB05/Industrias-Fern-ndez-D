@@ -1,13 +1,21 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { MessageCircle, ChevronDown, Shield, Clock, Award } from 'lucide-react'
 import { buildWhatsAppUrl, WA_MESSAGES } from '@/lib/whatsapp'
 import { staggerContainer, fadeUp, fadeIn } from '@/lib/animations'
 
 const titleWords = ['Nichos', 'y', 'cajas', 'para', 'gas']
+
+const heroImages = [
+  '/Hero.jpg',
+  '/Hero2.jpg',
+  '/Hero3.jpg',
+  '/Hero4.jpg',
+  '/Hero5.jpg',
+]
 
 function ProductSchematic() {
   return (
@@ -63,11 +71,17 @@ function ProductSchematic() {
               <div className="absolute inset-y-0 left-1/2 w-px bg-gold/30" />
             </div>
           ))}
-          {/* Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-            <span className="font-display font-black text-7xl text-white/[0.045] leading-none">
-              FD
-            </span>
+          {/* Product image centered inside the frame */}
+          <div className="absolute inset-0 flex items-center justify-center p-8 pt-10 pb-8">
+            <div className="relative w-full h-full">
+              <Image
+                src="/Caja_sin_fondo.png"
+                alt="Nicho para gas Industrias Fernández"
+                fill
+                className="object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
+                sizes="(max-width: 1024px) 0px, 240px"
+              />
+            </div>
           </div>
         </div>
 
@@ -140,8 +154,15 @@ export function Hero() {
     target: heroRef,
     offset: ['start start', 'end start'],
   })
-  // Parallax: background moves upward slower than content as user scrolls
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
+
+  const [currentIndex, setCurrentIndex] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % heroImages.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section
@@ -149,25 +170,36 @@ export function Hero() {
       id="hero"
       className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-navy-darker"
     >
-      {/* Parallax background */}
+      {/* Parallax background with slideshow */}
       <motion.div
         className="absolute left-0 right-0 h-[120%]"
         style={{ top: '-10%', y: imageY }}
       >
-        <Image
-          src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1600&q=80"
-          alt="Planta de fabricación metalmecánica"
-          fill
-          className="object-cover grayscale opacity-20"
-          priority
-          sizes="100vw"
-        />
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: 'easeInOut' }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={heroImages[currentIndex]}
+              alt="Planta de fabricación metalmecánica"
+              fill
+              className="object-cover grayscale opacity-35"
+              priority
+              sizes="100vw"
+            />
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
       {/* Blueprint grid overlay */}
       <div className="absolute inset-0 grid-bg-dots" />
       {/* Directional gradient: strong left, fade to transparent right */}
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-darker/95 via-navy-darker/80 to-navy-darker/35" />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-darker/80 via-navy-darker/60 to-navy-darker/20" />
       {/* Gold spotlight on text area */}
       <div
         className="absolute inset-0 pointer-events-none"

@@ -16,6 +16,8 @@ const iconMap: Record<string, React.ElementType> = {
 }
 
 export function WhyUs() {
+  const videoRef = useRef(null)
+  const videoInView = useInView(videoRef, { once: true, amount: 0.2 })
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
 
@@ -59,6 +61,25 @@ export function WhyUs() {
               </motion.div>
             )
           })}
+        </motion.div>
+
+        {/* Video showcase */}
+        <motion.div
+          ref={videoRef}
+          initial={{ opacity: 0, y: 32 }}
+          animate={videoInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="relative rounded-2xl overflow-hidden mt-14 shadow-2xl border border-gray-200 dark:border-white/10"
+        >
+          <video
+            src="/video1.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full max-h-[480px] object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
         </motion.div>
 
       </div>
